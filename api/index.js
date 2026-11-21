@@ -14,7 +14,8 @@ app.use(express.json({ limit: '100kb' }));
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 app.use(async (req, res, next) => {
-  try { await connect(); next(); } catch { res.status(500).json({ message: 'Database unavailable' }); }
+  try { await connect(); next(); }
+  catch (e) { console.error('DB connect failed:', e.message); res.status(500).json({ message: 'Database unavailable' }); }
 });
 
 app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, max: 50 }), require('./_routes/auth'));
